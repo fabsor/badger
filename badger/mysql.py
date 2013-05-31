@@ -1,6 +1,8 @@
 import MySQLdb as mdb
+import os
 
 class MysqlEngine:
+    PASSWORD_LENGTH = 10
     """
     Create databases and users and manage cloning and dumping of
     databases.
@@ -20,7 +22,7 @@ class MysqlEngine:
         if not "name" in site.database:
             site.database["name"] = site.name.replace(".", "").lower()
         if not "password" in site.database:
-            site.database["password"] = "password" # Todo: generate password properly.
+            site.database["password"] = os.urandom(self.PASSWORD_LENGTH)
         if not "user" in site.database:
             site.database["user"] = site.database["name"]
         if not "host" in site.database:
