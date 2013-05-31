@@ -25,7 +25,7 @@ class MysqlEngineTest(unittest.TestCase):
         server.add_engine(db_engine)
 
         platform = Platform("./testplatform", server)
-        site = Site("example.com", platform, server)
+        site = Site("example_.com", platform, server)
         site.verify()
         self.assertTrue(self.databaseExists("examplecom"), "Database exists")
         self.assertTrue(self.userExists("examplecom", "127.0.0.1"), "User exists")
@@ -55,7 +55,6 @@ class MysqlEngineTest(unittest.TestCase):
             return True
         except Exception:
             return False
-
 
     def tearDown(self):
         db = mdb.connect("127.0.0.1", "root", "", "mysql")

@@ -1,5 +1,7 @@
 import MySQLdb as mdb
 import os
+import re
+import base64
 
 class MysqlEngine:
     PASSWORD_LENGTH = 10
@@ -21,14 +23,13 @@ class MysqlEngine:
         if not hasattr(site, "database"):
             site.database = {}
         if not "name" in site.database:
-            site.database["name"] = site.name.replace(".", "").lower()
+            site.database["name"] = re.sub(r"[^a-zA-Z]*", "", site.name).lower()
         if not "password" in site.database:
-            site.database["password"] = os.urandom(self.PASSWORD_LENGTH)
+            site.database["password"] = base64.urlsafe_b64encode(os.urandom(self.PASSWORD_LENGTH))
         if not "user" in site.database:
             site.database["user"] = site.database["name"]
         if not "host" in site.database:
             site.database["host"] = site.platform.server.hostname
-
         self.create_database(site.database["name"])
         self.create_user(site.database["name"], site.database["password"])
         self.grant_privileges(site.database["name"], site.database["user"], site.database["host"], site.database["password"])
