@@ -20,14 +20,15 @@ class MysqlEngine:
 
 
     def verify_site(self, site):
+        safe_name = re.sub(r"[^a-zA-Z]*", "", site.name).lower()
         if not hasattr(site, "database"):
             site.database = {}
         if not "name" in site.database:
-            site.database["name"] = re.sub(r"[^a-zA-Z]*", "", site.name).lower()
+            site.database["name"] = safe_name
         if not "password" in site.database:
             site.database["password"] = base64.urlsafe_b64encode(os.urandom(self.PASSWORD_LENGTH))
         if not "user" in site.database:
-            site.database["user"] = site.database["name"]
+            site.database["user"] = safe_name
         if not "host" in site.database:
             site.database["host"] = site.platform.server.hostname
         self.create_database(site.database["name"])
