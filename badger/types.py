@@ -4,15 +4,27 @@ Deploy, clone, backup and move sites
 easily.
 """
 
+from fabric.api import settings
+#, abort, run, cd, sudo, put, env, prompt, get, open_shell
+
 class Server:
     """
     A server has several services on it that can be used.
     """
-    def __init__(self, hostname, user, key=""):
+    def __init__(self, hostname, user, port = 22, key=""):
         self.hostname = hostname
         self.user = user
         self.key = key
+        self.port = port
         self.engines = {}
+
+    def __enter__(self):
+        self.con = settings(port=self.port, user=self.user,
+                            key_filename=self.key, host=self.hostname)
+        return self.con.__enter__()
+
+    def __exit__(self, type, value, traceback):
+        return self.con.__exit__(type, value, traceback)
 
     def add_engine(self, engine):
         """
