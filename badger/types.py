@@ -19,8 +19,9 @@ class Server:
         self.engines = {}
 
     def __enter__(self):
-        self.con = settings(port=self.port, user=self.user,
-                            key_filename=self.key, host=self.hostname)
+        hoststring = "{0}@{1}:{2}".format(self.user, self.hostname, self.port)
+        self.con = settings(host_string=hoststring, port=self.port, user=self.user,
+                            key_filename=self.key, host=self.hostname, abort_on_prompts=True)
         return self.con.__enter__()
 
     def __exit__(self, type, value, traceback):
