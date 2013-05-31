@@ -12,23 +12,43 @@ class Server:
         self.hostname = hostname
         self.user = user
         self.key = key
-        self.engines = []
+        self.engines = {}
 
     def add_engine(self, engine):
         """
         Add a engine to this server, for instance a web server.
         """
-        self.engines.append(engine)
+        name = engine.engine_name
+        if not self.engines.has_key(name):
+            self.engines[name] = list()
+        self.engines[name].append(engine)
+
+    def get_engine(self, engine_name):
+        """
+        Look up and return engine(s) if we have any, else None.
+        """
+        if engine_name in self.engines.keys():
+            return self.engines[engine_name]
 
     def verify_site(self, site):
-        for engine in self.engines:
-            if engine.verify_site:
-                engine.verify_site(site)
-            
+        for engine_group in self.engines.values():
+            for engine in engine_group:
+                if engine.verify_site:
+                    engine.verify_site(site)
+
     def verify_platform(self, platform):
-        for engine in self.engines:
-            if engine.verify_site:
-                engine.verify_site(site)
+        for engine_group in self.engines.values():
+            for engine in engine_group:
+                if engine.verify_site:
+                    engine.verify_site(site)
+
+class LocalServer(Server):
+    """
+    Localhost server, based on server.
+    """
+    def __init__(self):
+        # FIXME: actually make me not use ssh to talk to myself.
+        Server.__init__(self, "localhost", "badger", key="")
 
 class Platform:
     """
@@ -87,10 +107,3 @@ class Site:
         """
         Back the site up to a certain directory.
         """
-
-class DatabaseEngine:
-    def __init__(self, host, user, password):
-        self.host = host
-        self.user = user
-        self.password = password
-

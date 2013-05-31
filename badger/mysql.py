@@ -8,6 +8,7 @@ class MysqlEngine:
     databases.
     """
     def __init__(self, host, user, password):
+        self.engine_name = "mysql"
         self.host = host
         self.user = user
         self.password = password
