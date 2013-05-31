@@ -1,5 +1,6 @@
 class ApacheEngine:
     def __init__(self, server, binary="/usr/sbin/apache2ctl"):
+        self.engine_name = "apache"
         self.binary = binary
 
     def restart(self):

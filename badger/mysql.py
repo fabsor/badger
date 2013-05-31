@@ -6,13 +6,14 @@ class MysqlEngine:
     databases.
     """
     def __init__(self, host, user, password):
+        self.engine_name = "mysql"
         self.host = host
         self.user = user
         self.password = password
 
     def create_connection(self, database=""):
         return mdb.connect(host=self.host, user=self.user, passwd=self.password, db=database)
-        
+
 
     def verify_site(self, site):
         if not hasattr(site, "database"):
@@ -43,7 +44,7 @@ class MysqlEngine:
             cursor.execute("SELECT count(User) FROM user WHERE User = %s", (name))
             if cursor.fetchone() == 0:
                 cursor.execute("CREATE USER {0} IDENTIFIED BY '{1}'".format(name, password))
-    
+
     def grant_privileges(self, database, username, host, password):
         db = self.create_connection()
         with db:

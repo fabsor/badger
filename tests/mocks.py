@@ -4,6 +4,7 @@ class MockEngine:
     have been verified.
     """
     def __init__(self):
+        self.engine_name = "mock"
         self.reset()
 
     def reset(self):
@@ -15,7 +16,7 @@ class MockEngine:
 
     def restart(self):
         self.restarted = True
-    
+
     def verify_site(self, site):
         self.verified_sites.append(site)
         return True
