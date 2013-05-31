@@ -3,6 +3,7 @@ import MySQLdb as mdb
 import mocks
 import sys
 from mocks import MockEngine
+from settings import mysql
 from badger.mysql import MysqlEngine
 from badger.types import Site, Server, Platform
 
@@ -18,7 +19,7 @@ class MysqlEngineTest(unittest.TestCase):
         # Set up a mock engine for the platforms
         mocked_engine = MockEngine()
         # Set up the mysql engine.
-        db_engine = MysqlEngine("127.0.0.1", "root", "")
+        db_engine = MysqlEngine(mysql["host"], mysql["user"], mysql["password"])
         server = Server("127.0.0.1", "deployer")
         server.add_engine(mocked_engine)
         server.add_engine(db_engine)
@@ -35,17 +36,20 @@ class MysqlEngineTest(unittest.TestCase):
             cursor = db.cursor()
             cursor.execute("SELECT count(User) FROM user WHERE User = %s and Host = %s",
             (user, host))
-            print cursor.fetchone()
-            # return cursor.fetchone() == 1
-        
+            return cursor.fetchone()[0] == 1
+
     def databaseExists(self, database):
         db = mdb.connect("127.0.0.1", "root", "")
         with db:
             cursor = db.cursor()
             cursor.execute("SHOW DATABASES")
             for row in cursor.fetchall():
-                print row[0]
                 if row[0] == database:
                     return True
             return False
-        
+    def tearDown(self):
+        db = mdb.connect("127.0.0.1", "root", "", "mysql")
+        with db:
+            cursor = db.cursor()
+            cursor.execute("DROP DATABASE examplecom")
+            cursor.execute("DROP USER %s@%s", ("examplecom", mysql["host"]))

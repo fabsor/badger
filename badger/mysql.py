@@ -12,7 +12,7 @@ class MysqlEngine:
 
     def create_connection(self, database=""):
         return mdb.connect(host=self.host, user=self.user, passwd=self.password, db=database)
-        
+
 
     def verify_site(self, site):
         if not hasattr(site, "database"):
@@ -34,7 +34,8 @@ class MysqlEngine:
         db = self.create_connection()
         with db:
             cursor = db.cursor()
-            cursor.execute("CREATE DATABASE IF NOT EXISTS {0}".format(name))
+            if not self._database_exists(cursor, name):
+                cursor.execute("CREATE DATABASE IF NOT EXISTS {0}".format(name))
 
     def create_user(self, name, password):
         db = self.create_connection("mysql")
@@ -43,7 +44,7 @@ class MysqlEngine:
             cursor.execute("SELECT count(User) FROM user WHERE User = %s", (name))
             if cursor.fetchone() == 0:
                 cursor.execute("CREATE USER {0} IDENTIFIED BY '{1}'".format(name, password))
-    
+
     def grant_privileges(self, database, username, host, password):
         db = self.create_connection()
         with db:
@@ -52,3 +53,10 @@ class MysqlEngine:
 
     def close_conection(self):
         self.db.close()
+
+    def _database_exists(self, cursor, database):
+        cursor.execute("SHOW DATABASES")
+        for row in cursor.fetchall():
+            if row[0] == database:
+                return True
+        return False
