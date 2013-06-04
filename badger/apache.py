@@ -11,8 +11,8 @@ class ApacheEngine:
         self.binary = binary
         self.vhost_path = vhost_path
 
-    def restart(self):
-        run("sudo {0} restart", format(binary))
+    def service_control(self, action):
+        sudo("{0} restart", format(self.binary, action))
 
     def verify_site(self, site):
         if not hasattr(site, "database"):
@@ -22,19 +22,18 @@ class ApacheEngine:
             site.apache["vhost"] = os.path.join(self.vhost_path, site.name +
                                                 ".vhost")
 
-        self.generate_site_vhost(site)
+        if self.add_site_vhost(site):
+            self.services_control("graceful") # feels safer then restart.
 
-    def generate_site_vhost(self, site):
+    def add_site_vhost(self, site):
         with site.platform.server:
             if exists(site.apache["vhost"]):
-                return
+                return False
 
             # Fake
             open("/tmp/fake.vhost", "w+").write("Mah vhost is amazing")
             put("/tmp/fake.vhost", site.apache["vhost"])
+            return True
 
-    def remove_site(self, site):
-        run("rm config/apache/sites/{0}.conf", site.name)
-
-    def remove_platform(self, platform):
-        run("rm config/apache/platforms/{0}.conf", platform.name)
+    def remove_site_vhost(self, site):
+        sudo("rm {0}", site.apache["vhost"])

@@ -3,6 +3,7 @@ import os
 from mocks import MockEngine
 from badger.apache import ApacheEngine
 from badger.types import Site, Server, Platform
+from fabric.api import run
 from fabric.contrib.files import exists
 
 class ApacheEngineTest(unittest.TestCase):
@@ -22,7 +23,12 @@ class ApacheEngineTest(unittest.TestCase):
         site.verify()
 
         self.assertTrue(self.vhostExists(site))
+        self.assertTrue(self.apacheRunning(site))
 
     def vhostExists(self, site):
         with site.platform.server:
             return exists(site.apache["vhost"])
+
+    def apacheRunning(self, site):
+        with site.platform.server:
+            return run("pgrep '^apache2$'") != ""
