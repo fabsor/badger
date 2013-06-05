@@ -20,8 +20,9 @@ class TemplateEngine:
         #self.env = Environment(loader=PackageLoader('badger', 'templates'))
 
     def get(self, template):
-        """Returns a jinja2 Template object on success, else None"""
-        #return self.env.get_template(template)
+        """
+        Returns a jinja2 Template object on success, else None
+        """
         for path in self.template_paths:
             filename = os.path.join(path, template)
             if os.path.isfile(filename):
