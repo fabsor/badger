@@ -16,6 +16,7 @@ class TemplateEngine:
         """
         @template_paths list of paths to look for templates in
         """
+        self.engine_name = "template"
         self.template_paths = template_paths
         #self.env = Environment(loader=PackageLoader('badger', 'templates'))
 

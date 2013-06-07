@@ -20,8 +20,9 @@ class Server:
 
     def __enter__(self):
         hoststring = "{0}@{1}:{2}".format(self.user, self.hostname, self.port)
-        self.con = settings(host_string=hoststring, port=self.port, user=self.user,
-                            key_filename=self.key, host=self.hostname, abort_on_prompts=True)
+        self.con = settings(host_string=hoststring, port=self.port,
+                            user=self.user, key_filename=self.key,
+                            host=self.hostname, abort_on_prompts=True)
         return self.con.__enter__()
 
     def __exit__(self, type, value, traceback):
@@ -76,6 +77,7 @@ class Platform:
         """
         Deploy a server on a specific path.
         """
+        pass
 
     def verify(self):
         self.server.verify_platform(self)
@@ -89,6 +91,7 @@ class Platform:
         Build this platform, for instance by running drush make,
         compiling less and sass and so on.
         """
+        pass
 
 class Site:
     """
@@ -115,8 +118,10 @@ class Site:
         """
         Migrate a site to a new platform.
         """
+        pass
 
     def backup(self, backup_path):
         """
         Back the site up to a certain directory.
         """
+        pass

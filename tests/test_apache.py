@@ -3,6 +3,7 @@ import os
 from mocks import MockEngine
 from badger.apache import ApacheEngine
 from badger.types import Site, Server, Platform
+from badger.template import TemplateEngine
 from fabric.api import run
 from fabric.contrib.files import exists
 
@@ -17,7 +18,7 @@ class ApacheEngineTest(unittest.TestCase):
         server = Server("127.0.0.1", "deployer")
         server.add_engine(MockEngine())
         server.add_engine(ApacheEngine(server))
-
+        server.add_engine(TemplateEngine("templates"))
         platform = Platform("./testplatform", server)
         site = Site("example.com", platform, server)
         site.verify()
