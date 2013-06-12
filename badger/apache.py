@@ -6,11 +6,13 @@ from fabric.contrib.files import exists
 class ApacheEngine:
     def __init__(self, server, binary="/usr/sbin/apache2ctl",
                  vhost_path="/etc/apache2/sites-enabled",
-                 vhost_template="apache_vhost.template"):
+                 vhost_template="apache_vhost.template",
+                 vhost_data = {}):
         self.engine_name = "apache"
         self.binary = binary
         self.vhost_path = vhost_path
         self.vhost_template = vhost_template
+        self.vhost_data = vhost_data
 
     def service_control(self, action):
         sudo("{0} restart", format(self.binary, action))
@@ -24,7 +26,7 @@ class ApacheEngine:
                                                 site.name + ".vhost")
 
         if self.add_site_vhost(site):
-            self.services_control("graceful") # feels safer then restart.
+            self.service_control("graceful") # feels safer then restart.
 
     def add_site_vhost(self, site):
         with site.platform.server:
@@ -32,7 +34,13 @@ class ApacheEngine:
             te = site.platform.server.get_engine("template")[0]
             # FIXME: We really need to pick up site specfic stuff here, and
             # inserts etc
-            vhost = te.get(self.vhost_template).render(
+            vhost = te.get(self.vhost_template)
+
+            if not vhost:
+                # FIXME: Raise error here
+                pass
+
+            vhost = vhost.render(
                 {"port": 80,
                  "webmaster_email": "sample@mail.com",
                  "webroot": site.platform.source_path})

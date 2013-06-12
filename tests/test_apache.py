@@ -17,8 +17,8 @@ class ApacheEngineTest(unittest.TestCase):
         """
         server = Server("127.0.0.1", "deployer")
         server.add_engine(MockEngine())
-        server.add_engine(ApacheEngine(server))
-        server.add_engine(TemplateEngine("templates"))
+        server.add_engine(ApacheEngine(server, vhost_template="apache.vhost"))
+        server.add_engine(TemplateEngine(["./tests/templates"]))
         platform = Platform("./testplatform", server)
         site = Site("example.com", platform, server)
         site.verify()
