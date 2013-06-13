@@ -25,9 +25,15 @@ class ApacheEngineTest(unittest.TestCase):
 
         self.assertTrue(self.vhostExists(site))
         self.assertTrue(self.apacheRunning(site))
+        self.assertTrue(self.vhostOK(site))
 
     def vhostExists(self, site):
         with site.platform.server:
+            return exists(site.apache["vhost"])
+
+    def vhostOK(self, site):
+        with site.platform.server:
+            expected = open("./tests/templates/test.out", "r").read()
             return exists(site.apache["vhost"])
 
     def apacheRunning(self, site):

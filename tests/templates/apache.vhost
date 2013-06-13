@@ -1,0 +1,15 @@
+<VirtualHost *:{{port}}>
+	ServerAdmin {{webmaster_email}}
+
+	DocumentRoot {{webroot}}
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory {{webroot}}>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+</VirtualHost>
